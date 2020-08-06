@@ -3,9 +3,25 @@ const quoteText = document.getElementById('quote');
 const authorText = document.getElementById('author');
 const twitterBtn = document.getElementById('twitter');
 const newQuoteBtn = document.getElementById('new-quote');
+const loader = document.getElementById('loader');
+
+// Show loading spinner
+function showLoadingSpinner() {
+  loader.hidden = false;
+  quoteContainer.hidden = true;
+}
+
+// Remove loading spinner
+function removeLoadingSpinner() {
+  if (!loader.hidden) {
+    quoteContainer.hidden = false;
+    loader.hidden = true;
+  }
+}
 
 // Get quote from API
 async function getQuote() {
+  showLoadingSpinner();
   const proxyUrl = 'https://boiling-journey-68368.herokuapp.com/';
   const apiUrl =
     'http://api.forismatic.com/api/1.0/?method=getQuote&lang=en&format=json';
@@ -20,13 +36,16 @@ async function getQuote() {
     } else {
       authorText.innerText = data.quoteAuthor;
     }
-    // Reduce font size for longer quotes
+    // Dynamically reduce font size for longer quotes
     if (data.quoteText.length > 120) {
       quoteText.classList.add('long-quote');
     } else {
       quoteText.classList.remove('long-quote');
     }
     quoteText.innerText = data.quoteText;
+
+    // Stop loader, show quote
+    removeLoadingSpinner();
   } catch (error) {
     getQuote();
   }
